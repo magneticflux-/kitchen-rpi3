@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="800dp"
+    android:layout_margin="@dimen/card_tile_margin"
+    app:cardBackgroundColor="@color/colorPrimary"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            android:fontFamily="@font/weather"
+            android:text="@string/wi_day_rain_wind"
+            android:textColor="@android:color/white"
+            android:textSize="200sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/dark_sky"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/powered_by_dark_sky_notice"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
