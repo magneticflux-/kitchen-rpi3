@@ -2,11 +2,11 @@ package org.skaggsm.kpi3.cards
 
 import android.support.v7.widget.CardView
 import android.view.View
-import com.example.androidthings.myproject.R
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
+import org.skaggsm.kpi3.R
 import java.util.*
 
 /**

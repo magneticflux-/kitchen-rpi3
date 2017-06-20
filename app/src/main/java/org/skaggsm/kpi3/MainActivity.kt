@@ -3,7 +3,6 @@ package org.skaggsm.kpi3
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import com.example.androidthings.myproject.R
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
@@ -37,8 +36,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         adapter.addItem(CalendarCard())
-        adapter.addItem(WeatherCard())
-        adapter.addItem(WeatherCard())
         adapter.addItem(WeatherCard())
     }
 }

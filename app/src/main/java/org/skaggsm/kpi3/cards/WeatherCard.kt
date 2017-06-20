@@ -7,7 +7,6 @@ import android.net.Uri
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.TextView
-import com.example.androidthings.myproject.R
 import com.github.jinatonic.confetti.ConfettiManager
 import com.github.jinatonic.confetti.ConfettiSource
 import com.github.jinatonic.confetti.ConfettoGenerator
@@ -18,6 +17,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import org.jetbrains.anko.find
+import org.skaggsm.kpi3.R
 import java.util.*
 
 
@@ -78,7 +78,7 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
         return WeatherCardViewHolder(view, adapter)
     }
 
-    override fun getLayoutRes(): Int = com.example.androidthings.myproject.R.layout.item_weather_card
+    override fun getLayoutRes(): Int = R.layout.item_weather_card
 }
 
 class WeatherCardViewHolder(view: View, adapter: FlexibleAdapter<out IFlexible<*>>) : FlexibleViewHolder(view, adapter) {
