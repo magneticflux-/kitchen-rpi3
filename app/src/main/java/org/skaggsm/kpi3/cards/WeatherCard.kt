@@ -1,9 +1,7 @@
 package org.skaggsm.kpi3.cards
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.TextView
@@ -64,10 +62,6 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
                     .setInitialRotation(-angle)
                     .animate()
         }
-
-        holder.darkSky.setOnClickListener {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://darksky.net/poweredby/")))
-        }
     }
 
     override fun unbindViewHolder(adapter: FlexibleAdapter<out IFlexible<*>>?, holder: WeatherCardViewHolder?, position: Int) {
@@ -83,8 +77,7 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
 
 class WeatherCardViewHolder(view: View, adapter: FlexibleAdapter<out IFlexible<*>>) : FlexibleViewHolder(view, adapter) {
     val card: CardView = view as CardView
-    val weather: TextView = view.find<TextView>(R.id.weather)
-    val darkSky: TextView = view.find<TextView>(R.id.dark_sky)
+    val weather: TextView = view.find<TextView>(R.id.current_weather_icon)
 }
 
 class BitmapConfettoGenerator(val bitmap: Bitmap) : ConfettoGenerator {

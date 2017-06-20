@@ -6,4 +6,5 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="powered_by_dark_sky_notice">Powered by Dark Sky™</string>
+    <string name="content_description_weather_underground_logo">Weather Underground</string>
 </resources>
