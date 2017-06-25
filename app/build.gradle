@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "org.skaggsm.kpi3"
-        minSdkVersion 26
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "0.1.0"
@@ -33,20 +33,20 @@ configurations.all {
 }
 
 dependencies {
-    compileOnly 'com.google.android.things:androidthings:0.4-devpreview'
+    compileOnly 'com.google.android.things:androidthings:0.4.1-devpreview'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     implementation 'org.jetbrains.anko:anko-commons:0.10.1'
     implementation 'com.android.support:design:26.0.0-beta2'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
     implementation 'com.android.support:recyclerview-v7:26.0.0-beta2'
     implementation 'com.android.support:cardview-v7:26.0.0-beta2'
-    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.0.0-beta2'
 
     implementation 'eu.davidea:flexible-adapter:5.0.0-rc2'
     implementation 'com.github.pwittchen:weathericonview:1.1.0'
     implementation 'com.github.magneticflux-:WeatherView:-SNAPSHOT'
     implementation 'com.github.jinatonic.confetti:confetti:1.1.0'
-    //implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
-    implementation 'com.github.magneticflux-:ChipsLayoutManager:-SNAPSHOT'
+    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }

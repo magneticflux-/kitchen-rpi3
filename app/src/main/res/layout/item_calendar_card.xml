@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/card_height"
     android:layout_margin="@dimen/card_tile_margin"
+    app:cardBackgroundColor="@color/colorPrimary"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp">
 
@@ -33,7 +34,7 @@
             android:layout_height="0dp"
             android:gravity="center"
             android:text="Calendar"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceLargeInverse"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/calendar_card"
             app:layout_constraintRight_toRightOf="parent"

@@ -14,7 +14,7 @@ import java.util.*
  */
 
 class CalendarCard : AbstractFlexibleItem<CalendarCardViewHolder>(), HasSpanSize {
-    override fun getRequestedSize(): Int = 3
+    override fun getRequestedSize(): Int = 2
 
     override fun equals(other: Any?): Boolean = Objects.equals(this, other)
 
