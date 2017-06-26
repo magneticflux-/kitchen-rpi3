@@ -61,7 +61,7 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
                     BitmapConfettoGenerator(rainBitmap!!),
                     ConfettiSource(0 - extraDistanceLeft, 0, holder.card.width + extraDistanceRight, 0),
                     holder.card)
-                    .setEmissionDuration(ConfettiManager.INFINITE_DURATION)
+                    .setEmissionDuration(5000)
                     .setEmissionRate(5F)
                     .setVelocityY(yVelocity, yVelocity * .05F)
                     .setVelocityX(xVelocity, xVelocity * .05F)

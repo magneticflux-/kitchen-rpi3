@@ -3,6 +3,8 @@ package org.skaggsm.kpi3
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.text.format.Formatter
@@ -23,9 +25,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val wm = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        @Suppress("DEPRECATION")
-        title = "IP: \"${Formatter.formatIpAddress(wm.connectionInfo.ipAddress)}\""
+        setTitleIP()
 
         adapter = FlexibleAdapter(null)
 
@@ -45,5 +45,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         adapter.addItem(CalendarCard())
         adapter.addItem(WeatherCard())
+
+        Handler(Looper.getMainLooper()).postDelayed({ setTitleIP() }, 3000)
+    }
+
+    private fun setTitleIP(): Unit {
+        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        @Suppress("DEPRECATION")
+        title = "IP: \"${Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)}\""
     }
 }
