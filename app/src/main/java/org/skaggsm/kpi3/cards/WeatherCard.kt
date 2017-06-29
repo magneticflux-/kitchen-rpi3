@@ -117,9 +117,14 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, 
         this.context = adapter.recyclerView.context
         this.holder = holder
 
-        val factory = { TextView(context).apply { setTextAppearance(android.R.style.TextAppearance_Material_Large_Inverse) } }
-        holder.temperatureText.setFactory(factory)
-        holder.weatherDescriptionText.setFactory(factory)
+        val textViewFactory = {
+            TextView(context).apply {
+                setTextAppearance(android.R.style.TextAppearance_Material_Large_Inverse)
+                textAlignment = View.TEXT_ALIGNMENT_CENTER
+            }
+        }
+        holder.temperatureText.setFactory(textViewFactory)
+        holder.weatherDescriptionText.setFactory(textViewFactory)
 
         val loaderManager = context.findActivity.loaderManager
         loaderManager.initLoader(WEATHER_LOADER_ID, null, this)
