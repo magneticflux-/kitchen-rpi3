@@ -15,29 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <TextSwitcher
             android:id="@+id/temperature_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/weather_text_margin"
-            android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse"
+            android:inAnimation="@android:anim/fade_in"
+            android:outAnimation="@android:anim/fade_out"
             app:layout_constraintBottom_toTopOf="@id/weather_description_text"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="89.1 F (31.7 C)" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <TextSwitcher
             android:id="@+id/weather_description_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/weather_text_margin"
-            android:textAppearance="@android:style/TextAppearance.Material.Large.Inverse"
+            android:inAnimation="@android:anim/fade_in"
+            android:outAnimation="@android:anim/fade_out"
             app:layout_constraintBottom_toTopOf="@id/current_weather_icon"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/temperature_text"
-            tools:text="Clear" />
+            app:layout_constraintTop_toBottomOf="@id/temperature_text" />
 
 
         <TextView

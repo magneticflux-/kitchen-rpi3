@@ -33,6 +33,7 @@ import android.os.Bundle
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextSwitcher
 import android.widget.TextView
 import com.github.jinatonic.confetti.ConfettiManager
 import com.github.jinatonic.confetti.ConfettiSource
@@ -96,8 +97,8 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, 
     }
 
     private fun setWeatherResponse(weatherResponse: WeatherResponse) {
-        holder.temperatureText.text = "${weatherResponse.current_observation.temp_f}° F"
-        holder.weatherDescriptionText.text = weatherResponse.current_observation.weather
+        holder.temperatureText.setText("${weatherResponse.current_observation.temp_f}° F")
+        holder.weatherDescriptionText.setText(weatherResponse.current_observation.weather)
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>?) {
@@ -115,6 +116,10 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, 
     override fun bindViewHolder(adapter: FlexibleAdapter<out IFlexible<*>>, holder: WeatherCardViewHolder, position: Int, payloads: MutableList<Any?>?) {
         this.context = adapter.recyclerView.context
         this.holder = holder
+
+        val factory = { TextView(context).apply { setTextAppearance(android.R.style.TextAppearance_Material_Large_Inverse) } }
+        holder.temperatureText.setFactory(factory)
+        holder.weatherDescriptionText.setFactory(factory)
 
         val loaderManager = context.findActivity.loaderManager
         loaderManager.initLoader(WEATHER_LOADER_ID, null, this)
@@ -185,8 +190,8 @@ class WeatherCardViewHolder(view: View, adapter: FlexibleAdapter<out IFlexible<*
     val card: CardView = view as CardView
     val weather: TextView = view.find<TextView>(R.id.current_weather_icon)
     val logo: ImageView = view.find<ImageView>(R.id.weather_underground_logo)
-    val temperatureText: TextView = view.find<TextView>(R.id.temperature_text)
-    val weatherDescriptionText: TextView = view.find<TextView>(R.id.weather_description_text)
+    val temperatureText: TextSwitcher = view.find<TextSwitcher>(R.id.temperature_text)
+    val weatherDescriptionText: TextSwitcher = view.find<TextSwitcher>(R.id.weather_description_text)
 }
 
 class BitmapConfettoGenerator(val bitmap: Bitmap) : ConfettoGenerator {
