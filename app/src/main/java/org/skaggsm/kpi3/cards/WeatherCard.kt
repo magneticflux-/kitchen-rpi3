@@ -1,7 +1,18 @@
 package org.skaggsm.kpi3.cards
 
+import android.app.Activity
+import android.app.Fragment
+import android.app.LoaderManager
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
+import android.content.CursorLoader
+import android.content.Loader
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.ImageView
@@ -11,36 +22,97 @@ import com.github.jinatonic.confetti.ConfettiSource
 import com.github.jinatonic.confetti.ConfettoGenerator
 import com.github.jinatonic.confetti.confetto.BitmapConfetto
 import com.github.jinatonic.confetti.confetto.Confetto
+import com.squareup.moshi.KotlinJsonAdapterFactory
+import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
+import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.find
+import org.jetbrains.anko.info
 import org.skaggsm.kpi3.R
+import org.skaggsm.kpi3.weather.StartWeatherServiceReceiver
+import org.skaggsm.kpi3.weather.WeatherDownloadService
+import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.COLUMN_NAME_JSON
+import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.CONTENT_URI
+import org.skaggsm.kpi3.weather.model.WeatherResponse
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 /**
  * Created by Mitchell on 6/15/2017.
  */
 
-class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
+class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, AnkoLogger, LoaderManager.LoaderCallbacks<Cursor> {
+    companion object {
+        const val WEATHER_LOADER_ID = 0
+        val MOSHI = object : ThreadLocal<Moshi>() {
+            override fun initialValue(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        }
+    }
+
+    private lateinit var context: Context
+    private lateinit var holder: WeatherCardViewHolder
+
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+        return CursorLoader(context, CONTENT_URI, arrayOf(COLUMN_NAME_JSON), null, null, null)
+    }
+
+    override fun onLoadFinished(loader: Loader<Cursor>?, data: Cursor) {
+        val startTime = System.nanoTime()
+
+        val jsonAdapter = MOSHI.get().adapter(WeatherResponse::class.java)
+
+        data.moveToNext()
+        val value = data.getString(data.getColumnIndex(COLUMN_NAME_JSON))
+
+        val weatherResponse = jsonAdapter.fromJson(value)!!
+
+        val elapsed = System.nanoTime() - startTime
+        info("Elapsed time: ${TimeUnit.NANOSECONDS.toMillis(elapsed)}ms")
+
+        setWeatherResponse(weatherResponse)
+    }
+
+    private fun setWeatherResponse(weatherResponse: WeatherResponse) {
+        holder.temperatureText.text = "${weatherResponse.current_observation.temp_f}° F"
+        holder.weatherDescriptionText.text = weatherResponse.current_observation.weather
+    }
+
+    override fun onLoaderReset(loader: Loader<Cursor>?) {
+    }
+
     override fun getRequestedSize(): Int = 1
 
     var rainBitmap: Bitmap? = null
     var confettiManager: ConfettiManager? = null
 
-    override fun equals(other: Any?): Boolean = Objects.equals(this, other)
+    override fun equals(other: Any?): Boolean = this === other
 
-    override fun hashCode(): Int = Objects.hashCode(this)
+    override fun hashCode(): Int = System.identityHashCode(this)
 
     override fun bindViewHolder(adapter: FlexibleAdapter<out IFlexible<*>>, holder: WeatherCardViewHolder, position: Int, payloads: MutableList<Any?>?) {
-        val context = adapter.recyclerView.context
+        this.context = adapter.recyclerView.context
+        this.holder = holder
+
+        val loaderManager = context.findActivity.loaderManager
+        loaderManager.initLoader(WEATHER_LOADER_ID, null, this)
 
         Picasso.with(context)
                 .load(R.drawable.wunderground_logo_horizontal)
                 .into(holder.logo)
+
+        holder.logo.setOnClickListener {
+            info("Starting WeatherDownloadService...")
+            val jobScheduler = context.getSystemService(JobScheduler::class.java)
+            jobScheduler.schedule(
+                    JobInfo.Builder(StartWeatherServiceReceiver.JOB_ID + 1, ComponentName(context, WeatherDownloadService::class.java))
+                            .setOverrideDeadline(0)
+                            .build())
+        }
 
         if (rainBitmap == null)
             rainBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.rain)
@@ -61,7 +133,7 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
                     BitmapConfettoGenerator(rainBitmap!!),
                     ConfettiSource(0 - extraDistanceLeft, 0, holder.card.width + extraDistanceRight, 0),
                     holder.card)
-                    .setEmissionDuration(5000)
+                    .setEmissionDuration(1000)
                     .setEmissionRate(5F)
                     .setVelocityY(yVelocity, yVelocity * .05F)
                     .setVelocityX(xVelocity, xVelocity * .05F)
@@ -81,10 +153,22 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize {
     override fun getLayoutRes(): Int = R.layout.item_weather_card
 }
 
+val Context.findActivity: Activity
+    get() {
+        if (this is Activity)
+            return this
+        else if (this is Fragment)
+            return this.activity
+        else
+            throw ClassCastException("Unable to find Activity! Are you in a Service?")
+    }
+
 class WeatherCardViewHolder(view: View, adapter: FlexibleAdapter<out IFlexible<*>>) : FlexibleViewHolder(view, adapter) {
     val card: CardView = view as CardView
     val weather: TextView = view.find<TextView>(R.id.current_weather_icon)
     val logo: ImageView = view.find<ImageView>(R.id.weather_underground_logo)
+    val temperatureText: TextView = view.find<TextView>(R.id.temperature_text)
+    val weatherDescriptionText: TextView = view.find<TextView>(R.id.weather_description_text)
 }
 
 class BitmapConfettoGenerator(val bitmap: Bitmap) : ConfettoGenerator {

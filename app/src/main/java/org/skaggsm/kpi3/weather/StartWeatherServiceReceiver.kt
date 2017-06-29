@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit
  * Created by Mitchell on 6/20/2017.
  */
 class StartWeatherServiceReceiver : BroadcastReceiver(), AnkoLogger {
+    companion object {
+        val JOB_ID = 0
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         info("onReceive called!")
 
@@ -22,6 +26,6 @@ class StartWeatherServiceReceiver : BroadcastReceiver(), AnkoLogger {
 
         val jobScheduler = context.getSystemService(JobScheduler::class.java)
 
-        jobScheduler.schedule(JobInfo.Builder(0, serviceComponent).setPeriodic(TimeUnit.MINUTES.toMillis(15)).build())
+        jobScheduler.schedule(JobInfo.Builder(JOB_ID, serviceComponent).setPeriodic(TimeUnit.MINUTES.toMillis(15)).build())
     }
 }

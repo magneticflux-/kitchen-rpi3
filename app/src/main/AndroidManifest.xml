@@ -16,6 +16,11 @@
             android:name="com.google.android.things"
             android:required="false" />
 
+        <provider
+            android:name=".weather.content.WeatherContentProvider"
+            android:authorities="${applicationId}.weather"
+            android:exported="false" />
+
         <service
             android:name=".weather.WeatherDownloadService"
             android:label="WeatherUnderground Data Download Service"

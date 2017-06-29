@@ -3,11 +3,17 @@ package org.skaggsm.kpi3.weather
 import android.app.Service
 import android.app.job.JobParameters
 import android.app.job.JobService
+import android.content.ContentValues
 import android.content.Intent
+import android.database.sqlite.SQLiteException
+import android.provider.BaseColumns
 import okhttp3.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.verbose
 import org.skaggsm.kpi3.BuildConfig.API_KEY
+import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.COLUMN_NAME_JSON
+import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.CONTENT_URI
 import java.io.IOException
 
 /**
@@ -17,19 +23,41 @@ class WeatherDownloadService : JobService(), AnkoLogger, Callback {
 
     private var params: JobParameters? = null
 
+
     companion object {
         const val FEATURES = "conditions/forecast/hourly"
-        const val QUERY = "MO/Saint_Charles.json"
+        const val QUERY = "pws:KMOSTCHA15"//"MO/Saint_Charles"
+        const val FORMAT = "json"
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        info("Failure! Exception: $e")
+        info("Request failure! Exception: $e")
         jobFinished(params, true)
         params = null
     }
 
     override fun onResponse(call: Call, response: Response) {
-        info("Success! Response: ${response.body()!!.string()}")
+        info("Request success!")
+
+        val body: String? = response.body()?.string()
+        verbose("Body: $body")
+
+        if (body != null) {
+            val rows = contentResolver.query(CONTENT_URI, arrayOf(BaseColumns._ID), null, null, null).use { it.count }
+
+            when (rows) {
+                0 -> contentResolver.insert(CONTENT_URI,
+                        ContentValues().apply { put(COLUMN_NAME_JSON, body) })
+
+                1 -> contentResolver.update(CONTENT_URI,
+                        ContentValues().apply { put(COLUMN_NAME_JSON, body) },
+                        null, // Update everything
+                        null)
+
+                else -> throw SQLiteException("More than 1 row present in the Weather table!")
+            }
+        }
+
         jobFinished(params, false)
         params = null
     }
@@ -45,7 +73,7 @@ class WeatherDownloadService : JobService(), AnkoLogger, Callback {
         val client: OkHttpClient = OkHttpClient()
 
         val request: Request = Request.Builder()
-                .url(HttpUrl.parse("http://api.wunderground.com/api/$API_KEY/$FEATURES/q/$QUERY"))
+                .url(HttpUrl.parse("http://api.wunderground.com/api/$API_KEY/$FEATURES/q/$QUERY.$FORMAT"))
                 .build()
 
         this.params = params

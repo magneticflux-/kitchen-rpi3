@@ -53,5 +53,6 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
     implementation 'com.squareup:android-times-square:1.7.3'
 }
