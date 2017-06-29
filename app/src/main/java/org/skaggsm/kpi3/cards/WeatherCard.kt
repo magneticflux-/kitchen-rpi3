@@ -83,15 +83,16 @@ class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, 
 
         val jsonAdapter = MOSHI.get().adapter(WeatherResponse::class.java)
 
-        data.moveToNext()
-        val value = data.getString(data.getColumnIndex(COLUMN_NAME_JSON))
+        if (data.moveToNext()) {
+            val value = data.getString(data.getColumnIndex(COLUMN_NAME_JSON))
 
-        val weatherResponse = jsonAdapter.fromJson(value)!!
+            val weatherResponse = jsonAdapter.fromJson(value)!!
 
-        val elapsed = System.nanoTime() - startTime
-        info("Elapsed time: ${TimeUnit.NANOSECONDS.toMillis(elapsed)}ms")
+            val elapsed = System.nanoTime() - startTime
+            info("Elapsed time: ${TimeUnit.NANOSECONDS.toMillis(elapsed)}ms")
 
-        setWeatherResponse(weatherResponse)
+            setWeatherResponse(weatherResponse)
+        }
     }
 
     private fun setWeatherResponse(weatherResponse: WeatherResponse) {
