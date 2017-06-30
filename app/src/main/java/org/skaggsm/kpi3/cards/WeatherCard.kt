@@ -24,7 +24,6 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
-import android.content.CursorLoader
 import android.content.Loader
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -40,8 +39,6 @@ import com.github.jinatonic.confetti.ConfettiSource
 import com.github.jinatonic.confetti.ConfettoGenerator
 import com.github.jinatonic.confetti.confetto.BitmapConfetto
 import com.github.jinatonic.confetti.confetto.Confetto
-import com.squareup.moshi.KotlinJsonAdapterFactory
-import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -52,12 +49,10 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.info
 import org.skaggsm.kpi3.R
 import org.skaggsm.kpi3.weather.StartWeatherServiceReceiver
+import org.skaggsm.kpi3.weather.WeatherDataLoader
 import org.skaggsm.kpi3.weather.WeatherDownloadService
-import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.COLUMN_NAME_JSON
-import org.skaggsm.kpi3.weather.content.WeatherDataContract.WeatherDataTable.CONTENT_URI
 import org.skaggsm.kpi3.weather.model.WeatherResponse
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -67,33 +62,20 @@ import java.util.concurrent.TimeUnit
 class WeatherCard : AbstractFlexibleItem<WeatherCardViewHolder>(), HasSpanSize, AnkoLogger, LoaderManager.LoaderCallbacks<Cursor> {
     companion object {
         const val WEATHER_LOADER_ID = 0
-        val MOSHI = object : ThreadLocal<Moshi>() {
-            override fun initialValue(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        }
     }
 
     private lateinit var context: Context
     private lateinit var holder: WeatherCardViewHolder
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        return CursorLoader(context, CONTENT_URI, arrayOf(COLUMN_NAME_JSON), null, null, null)
+        return WeatherDataLoader(context)
     }
 
-    override fun onLoadFinished(loader: Loader<Cursor>?, data: Cursor) {
-        val startTime = System.nanoTime()
-
-        val jsonAdapter = MOSHI.get().adapter(WeatherResponse::class.java)
-
-        if (data.moveToNext()) {
-            val value = data.getString(data.getColumnIndex(COLUMN_NAME_JSON))
-
-            val weatherResponse = jsonAdapter.fromJson(value)!!
-
-            val elapsed = System.nanoTime() - startTime
-            info("Elapsed time: ${TimeUnit.NANOSECONDS.toMillis(elapsed)}ms")
-
-            setWeatherResponse(weatherResponse)
-        }
+    override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor) {
+        if (loader is WeatherDataLoader)
+            loader.weatherResponse?.run { setWeatherResponse(this) }
+        else
+            throw IllegalStateException("Loader is not a WeatherDataLoader!")
     }
 
     private fun setWeatherResponse(weatherResponse: WeatherResponse) {
