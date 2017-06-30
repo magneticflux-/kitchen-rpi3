@@ -20,8 +20,7 @@ package org.skaggsm.kpi3
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.text.format.Formatter
@@ -41,6 +40,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (intent.categories.contains("android.intent.category.IOT_LAUNCHER"))
+            SystemClock.sleep(5000) // Prevent startup breaking
 
         setTitleIP()
 
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         adapter.addItem(CalendarCard())
         adapter.addItem(WeatherCard())
 
-        Handler(Looper.getMainLooper()).postDelayed({ setTitleIP() }, 3000)
+        //Handler(Looper.getMainLooper()).postDelayed({ setTitleIP() }, 3000)
     }
 
     private fun setTitleIP(): Unit {
