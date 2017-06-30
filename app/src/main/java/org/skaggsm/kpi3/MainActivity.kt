@@ -29,6 +29,7 @@ import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.skaggsm.kpi3.cards.CalendarCard
 import org.skaggsm.kpi3.cards.HasSpanSize
 import org.skaggsm.kpi3.cards.WeatherCard
@@ -41,8 +42,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (intent.categories.contains("android.intent.category.IOT_LAUNCHER"))
-            SystemClock.sleep(5000) // Prevent startup breaking
+        if (intent.categories.contains("android.intent.category.IOT_LAUNCHER")) {
+            info("Waiting for date and network...")
+            SystemClock.sleep(5000)
+            info("Proceeding with onCreate!")
+        }
 
         setTitleIP()
 
